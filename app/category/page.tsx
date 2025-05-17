@@ -9,7 +9,7 @@ import { Category } from '@prisma/client'
 import EmptyState from '../components/EmptyState'
 import { Pencil, Trash } from 'lucide-react'
 
-const page = () => {
+const Page = () => {
   const { user } = useUser()
   const email = user?.primaryEmailAddress?.emailAddress as string
 
@@ -141,4 +141,4 @@ const page = () => {
   )
 }
 
-export default page
+export default Page
