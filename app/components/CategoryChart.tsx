@@ -1,7 +1,15 @@
 import { ChartData } from '@/type'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useCallback } from 'react'
 import { getProductCategoryDistribution } from '../actions'
-import { ResponsiveContainer, CartesianGrid, XAxis, YAxis, Tooltip, Legend, Bar, Rectangle, BarChart, LabelList, Cell } from 'recharts'
+import {
+  ResponsiveContainer,
+  XAxis,
+  YAxis,
+  Bar,
+  BarChart,
+  LabelList,
+  Cell
+} from 'recharts'
 import EmptyState from './EmptyState'
 
 const CategoryChart = ({ email }: { email: string }) => {
@@ -11,7 +19,7 @@ const CategoryChart = ({ email }: { email: string }) => {
     default: "#F1D2BF"
   }
 
-  const fetchStats = async () => {
+  const fetchStats = useCallback(async () => {
     try {
       if (email) {
         const data = await getProductCategoryDistribution(email)
@@ -22,13 +30,11 @@ const CategoryChart = ({ email }: { email: string }) => {
     } catch (error) {
       console.error(error)
     }
-  }
-
-  useEffect(() => {
-    if (email)
-      fetchStats()
   }, [email])
 
+  useEffect(() => {
+    fetchStats()
+  }, [fetchStats])
 
   const renderChart = (widthOverride?: string) => (
     <ResponsiveContainer width="100%" height={350}>
@@ -46,21 +52,17 @@ const CategoryChart = ({ email }: { email: string }) => {
           dataKey="name"
           axisLine={false}
           tickLine={false}
-          tick={
-            {
-              fontSize: 15,
-              fill: "#793205",
-              fontWeight: "bold"
-            }
-          }
+          tick={{
+            fontSize: 15,
+            fill: "#793205",
+            fontWeight: "bold"
+          }}
         />
         <YAxis hide />
         <Bar
           dataKey="value"
           radius={[8, 8, 0, 0]}
-        // barSize={200}
         >
-
           <LabelList
             fill="#793205"
             dataKey="value"
@@ -70,23 +72,19 @@ const CategoryChart = ({ email }: { email: string }) => {
           {data.map((entry, index) => (
             <Cell key={`cell-${index}`} fill={COLORS.default} cursor="default" />
           ))}
-
         </Bar>
-
-
-
       </BarChart>
     </ResponsiveContainer>
   )
 
-  if (data.length == 0) {
+  if (data.length === 0) {
     return (
       <div className='w-full border-2 border-base-200 mt-4 p-4 rounded-3xl'>
         <h2 className='text-xl font-bold mb-4'>
           5 catégories avec le plus d'articles
         </h2>
         <EmptyState
-          message='Aucune catégorie pour le moment"'
+          message="Aucune catégorie pour le moment"
           IconComponent='Group'
         />
       </div>
@@ -104,5 +102,3 @@ const CategoryChart = ({ email }: { email: string }) => {
 }
 
 export default CategoryChart
-
-
