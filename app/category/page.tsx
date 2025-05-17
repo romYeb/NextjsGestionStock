@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import React, { useEffect, useState } from 'react'
 import Wrapper from '../components/Wrapper'
 import CategoryModal from '../components/CategoryModal'

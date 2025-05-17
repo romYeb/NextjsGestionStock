@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import { OrderItem, Product } from '@/type'
 import { useUser } from '@clerk/nextjs'

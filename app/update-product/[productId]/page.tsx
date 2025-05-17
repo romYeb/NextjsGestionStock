@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import { readProductById, updateProduct } from '@/app/actions'
 import ProductImage from '@/app/components/ProductImage'
 import Wrapper from '@/app/components/Wrapper'
