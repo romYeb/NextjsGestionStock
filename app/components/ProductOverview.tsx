@@ -1,12 +1,12 @@
 import { ProductOverviewStats } from '@/type'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useCallback } from 'react'
 import { getProductOverviewStats } from '../actions'
 import { Box, DollarSign, ShoppingCart, Tag } from 'lucide-react'
 
 const ProductOverview = ({ email }: { email: string }) => {
     const [stats, setStats] = useState<ProductOverviewStats | null>(null)
 
-    const fetchStats = async () => {
+    const fetchStats = useCallback(async () => {
         try {
             if (email) {
                 const result = await getProductOverviewStats(email)
@@ -17,25 +17,22 @@ const ProductOverview = ({ email }: { email: string }) => {
         } catch (error) {
             console.error(error)
         }
-    }
+    }, [email]) // <= email est bien dans les dépendances
 
     function formatNumber(value: number): string {
-        if (value >= 1_000_000) return (value / 1_000_000).toFixed(1) + "M";
-        if (value >= 1_000) return (value / 1_000).toFixed(1) + "k";
-        return value.toFixed(1);
+        if (value >= 1_000_000) return (value / 1_000_000).toFixed(1) + "M"
+        if (value >= 1_000) return (value / 1_000).toFixed(1) + "k"
+        return value.toFixed(1)
     }
 
-
     useEffect(() => {
-        if (email)
-            fetchStats()
-    }, [email])
+        fetchStats()
+    }, [fetchStats]) // plus de warning
 
     return (
         <div>
             {stats ? (
                 <div className='grid grid-cols-2 gap-4'>
-
                     <div className='border-2 p-4 border-base-200 rounded-3xl'>
                         <p className='stat-title'>Articles en stock</p>
                         <div className='flex justify-between items-center'>
@@ -59,7 +56,7 @@ const ProductOverview = ({ email }: { email: string }) => {
                     <div className='border-2 p-4 border-base-200 rounded-3xl'>
                         <p className='stat-title'>Valeur totale du stock</p>
                         <div className='flex justify-between items-center'>
-                            <div className='stat-value'>{formatNumber (stats.stockValue)} €</div>
+                            <div className='stat-value'>{formatNumber(stats.stockValue)} €</div>
                             <div className='bg-primary/25 p-3 rounded-full'>
                                 <DollarSign className='w-5 h-5 text-primary text-3xl' />
                             </div>
@@ -75,7 +72,6 @@ const ProductOverview = ({ email }: { email: string }) => {
                             </div>
                         </div>
                     </div>
-
                 </div>
             ) : (
                 <div className='flex justify-center items-center w-full'>

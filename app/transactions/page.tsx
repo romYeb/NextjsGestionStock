@@ -1,7 +1,7 @@
 "use client";
 import { Product, Transaction } from '@/type'
 import { useUser } from '@clerk/nextjs'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useCallback } from 'react'
 import Wrapper from '../components/Wrapper'
 import { getTransactions, readProducts } from '../actions'
 import EmptyState from '../components/EmptyState'
@@ -11,7 +11,6 @@ import { RotateCcw } from 'lucide-react'
 const ITEMS_PER_PAGE = 5
 
 const Page = () => {
-
     const { user } = useUser()
     const email = user?.primaryEmailAddress?.emailAddress as string
     const [products, setProducts] = useState<Product[]>([])
@@ -22,30 +21,25 @@ const Page = () => {
     const [filteredTransactions, setFilteredTransactions] = useState<Transaction[]>([])
     const [currentPage, setCurrentPage] = useState<number>(1)
 
-    const fetchData = async () => {
+    const fetchData = useCallback(async () => {
         try {
             if (email) {
                 const products = await readProducts(email)
                 const txs = await getTransactions(email)
-                if (products) {
-                    setProducts(products)
-                }
-                if (txs) {
-                    setTransactions(txs)
-                }
+                if (products) setProducts(products)
+                if (txs) setTransactions(txs)
             }
         } catch (error) {
             console.error(error)
         }
-    }
+    }, [email]) // ✅ Memoized dependency
 
     useEffect(() => {
-        if (email)
-            fetchData()
-    }, [email])
+        if (email) fetchData()
+    }, [email, fetchData]) // ✅ No more warning
 
     useEffect(() => {
-        let filtered = transactions;
+        let filtered = transactions
 
         if (selectedProduct) {
             filtered = filtered.filter((tx) => tx.productId === selectedProduct.id)
@@ -53,7 +47,6 @@ const Page = () => {
         if (dateFrom) {
             filtered = filtered.filter((tx) => new Date(tx.createdAt) >= new Date(dateFrom))
         }
-
         if (dateTo) {
             filtered = filtered.filter((tx) => new Date(tx.createdAt) <= new Date(dateTo))
         }
@@ -96,8 +89,7 @@ const Page = () => {
                             onFocus={(e) => e.target.type = "date"}
                             onBlur={(e) => {
                                 if (!e.target.value) e.target.type = "text"
-                            }
-                            }
+                            }}
                             onChange={(e) => setDateFrom(e.target.value)}
                         />
 
@@ -109,8 +101,7 @@ const Page = () => {
                             onFocus={(e) => e.target.type = "date"}
                             onBlur={(e) => {
                                 if (!e.target.value) e.target.type = "text"
-                            }
-                            }
+                            }}
                             onChange={(e) => setDateTo(e.target.value)}
                         />
 
@@ -125,7 +116,6 @@ const Page = () => {
                             <RotateCcw className='w-4 h-h' />
                         </button>
                     </div>
-
                 </div>
 
                 {transactions.length == 0 ? (
@@ -141,7 +131,6 @@ const Page = () => {
                     </div>
                 )}
 
-
                 {filteredTransactions.length > ITEMS_PER_PAGE && (
                     <div className="join">
                         <button
@@ -151,8 +140,7 @@ const Page = () => {
                         >
                             «
                         </button>
-                        <button
-                            className="join-item btn">
+                        <button className="join-item btn">
                             Page {currentPage}
                         </button>
                         <button
@@ -162,7 +150,6 @@ const Page = () => {
                         >
                             »
                         </button>
-
                     </div>
                 )}
             </div>

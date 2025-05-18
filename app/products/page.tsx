@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useCallback } from 'react'
 import Wrapper from '../components/Wrapper'
 import { useUser } from '@clerk/nextjs'
 import { Product } from '@/type'
@@ -15,7 +15,7 @@ const Page = () => {
     const email = user?.primaryEmailAddress?.emailAddress as string
     const [products, setProducts] = useState<Product[]>([])
 
-    const fetchProducts = async () => {
+    const fetchProducts = useCallback(async () => {
         try {
             if (email) {
                 const products = await readProducts(email)
@@ -26,12 +26,11 @@ const Page = () => {
         } catch (error) {
             console.error(error)
         }
-    }
+    }, [email])
 
     useEffect(() => {
-        if (email)
-            fetchProducts()
-    }, [email])
+        if (email) fetchProducts()
+    }, [fetchProducts, email]) // ✅ email ajouté ici
 
     const handleDeleteProduct = async (product: Product) => {
         const confirmDelete = confirm("Voulez-vous vraiment supprimer ce article ?")
@@ -59,18 +58,14 @@ const Page = () => {
         }
     }
 
-
-
     return (
         <Wrapper>
             <div className='overflow-x-auto'>
                 {products.length === 0 ? (
-                    <div>
-                        <EmptyState
-                            message='Aucun article disponible'
-                            IconComponent='PackageSearch'
-                        />
-                    </div>
+                    <EmptyState
+                        message='Aucun article disponible'
+                        IconComponent='PackageSearch'
+                    />
                 ) : (
                     <table className='table'>
                         <thead>
@@ -97,21 +92,11 @@ const Page = () => {
                                             widthClass='w-12'
                                         />
                                     </td>
-                                    <td>
-                                        {product.name}
-                                    </td>
-                                    <td>
-                                        {product.description}
-                                    </td>
-                                    <td>
-                                        {product.price} €
-                                    </td>
-                                    <td className='capitalize'>
-                                        {product.quantity} {product.unit}
-                                    </td>
-                                    <td>
-                                        {product.categoryName}
-                                    </td>
+                                    <td>{product.name}</td>
+                                    <td>{product.description}</td>
+                                    <td>{product.price} €</td>
+                                    <td className='capitalize'>{product.quantity} {product.unit}</td>
+                                    <td>{product.categoryName}</td>
                                     <td className='flex gap-2 flex-col'>
                                         <Link className='btn btn-xs w-fit btn-primary' href={`/update-product/${product.id}`}>
                                             Modifier

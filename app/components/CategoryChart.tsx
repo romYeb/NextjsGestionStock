@@ -81,7 +81,7 @@ const CategoryChart = ({ email }: { email: string }) => {
     return (
       <div className='w-full border-2 border-base-200 mt-4 p-4 rounded-3xl'>
         <h2 className='text-xl font-bold mb-4'>
-          5 catégories avec le plus d'articles
+          5 catégories avec le plus d&rsquo;articles
         </h2>
         <EmptyState
           message="Aucune catégorie pour le moment"
