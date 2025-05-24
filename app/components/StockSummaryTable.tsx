@@ -36,26 +36,26 @@ const StockSummaryTable = ({ email }: { email: string }) => {
                 <li className="step step-primary">
                     <div>
                         <span className='text-sm mr-4 font-bold'>Stock normal</span>
-                        <div className='badge badge-soft badge-success'>{data.inStockCount}</div>
+                        <div className='badge badge-soft badge-success'>{data.inStockCount ?? 0}</div>
                     </div>
                 </li>
                 <li className="step step-primary">
                     <div>
                         <span className='text-sm mr-4 font-bold'>Stock faible (≤ 2)</span>
-                        <div className='badge badge-soft badge-warning'>{data.lowStockCount}</div>
+                        <div className='badge badge-soft badge-warning'>{data.lowStockCount ?? 0}</div>
                     </div>
                 </li>
                 <li className="step step-primary">
                     <div>
                         <span className='text-sm mr-4 font-bold'>Rupture</span>
-                        <div className='badge badge-soft badge-error'>{data.outOfStockCount}</div>
+                        <div className='badge badge-soft badge-error'>{data.outOfStockCount ?? 0}</div>
                     </div>
                 </li>
             </ul>
 
             <div className='border-2 border-base-200 w-full p-4 rounded-3xl mt-4'>
                 <h2 className='text-xl font-bold mb-4'>Articles critiques</h2>
-                {data.criticalProducts.length > 0 ? (
+                {data.criticalProducts?.length > 0 ? (
                     <table className='table'>
                         <thead>
                             <tr>

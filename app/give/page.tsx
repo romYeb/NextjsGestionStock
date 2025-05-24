@@ -5,7 +5,6 @@ import { useUser } from '@clerk/nextjs'
 import React, { useEffect, useState, useCallback } from 'react'
 import { deductStockWithTransaction, readProducts } from '../actions'
 import Wrapper from '../components/Wrapper'
-// ❌ SUPPRIMÉ : import { text } from 'stream/consumers'
 import ProductComponent from '../components/ProductComponent'
 import EmptyState from '../components/EmptyState'
 import ProductImage from '../components/ProductImage'
@@ -13,7 +12,6 @@ import { Trash } from 'lucide-react'
 import { toast } from 'react-toastify'
 
 const Page = () => {
-
   const { user } = useUser()
   const email = user?.primaryEmailAddress?.emailAddress as string
   const [products, setProducts] = useState<Product[]>([])
@@ -102,7 +100,9 @@ const Page = () => {
         toast.error("Veuillez ajouter des articles à la commande.")
         return
       }
-      const response = await deductStockWithTransaction(order, email)
+
+      // ✅ Correction ici : définition d’un type de retour pour la réponse
+      const response: { success: boolean; message?: string } = await deductStockWithTransaction(order, email)
 
       if (response?.success) {
         toast.success("Don confirmé avec succès !")
@@ -110,10 +110,11 @@ const Page = () => {
         setSelectedProductIds([])
         fetchProducts()
       } else {
-        toast.error(`${response?.message}`)
+        toast.error(response.message ?? "Une erreur est survenue.")
       }
     } catch (error) {
       console.error(error)
+      toast.error("Une erreur s’est produite lors de l’envoi.")
     }
   }
 
