@@ -10,6 +10,7 @@ import EmptyState from '../components/EmptyState'
 import ProductImage from '../components/ProductImage'
 import { Trash } from 'lucide-react'
 import { toast } from 'react-toastify'
+import { getPublicImageUrl } from "@/lib/utils" // ✅ ajout
 
 const Page = () => {
   const { user } = useUser()
@@ -101,7 +102,6 @@ const Page = () => {
         return
       }
 
-      // ✅ Correction ici : définition d’un type de retour pour la réponse
       const response: { success: boolean; message?: string } = await deductStockWithTransaction(order, email)
 
       if (response?.success) {
@@ -156,7 +156,7 @@ const Page = () => {
                     <th>Image</th>
                     <th>Nom</th>
                     <th>Quantité</th>
-                    <th>Unité</th>
+                    <th>Taille</th>
                     <th>Action</th>
                   </tr>
                 </thead>
@@ -165,8 +165,8 @@ const Page = () => {
                     <tr key={item.productId}>
                       <td>
                         <ProductImage
-                          src={item.imageUrl}
-                          alt={item.imageUrl}
+                          src={getPublicImageUrl(item.imageUrl)} // ✅ transformation ici
+                          alt={item.name}
                           heightClass='h-12'
                           widthClass='w-12'
                         />
@@ -198,7 +198,7 @@ const Page = () => {
                 </tbody>
               </table>
               <button onClick={handleSubmit} className='btn btn-primary mt-4 w-fit'>
-                Confirmer le Don
+                Confirmer la Sortie
               </button>
             </>
           ) : (

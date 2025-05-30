@@ -32,9 +32,8 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ success: false, message: error.message }, { status: 500 });
     }
 
-    const publicUrl = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/uploads/${fileName}`;
-
-    return NextResponse.json({ success: true, path: publicUrl }, { status: 200 });
+    // ✅ Retourne uniquement le chemin relatif
+    return NextResponse.json({ success: true, path: `/uploads/${fileName}` }, { status: 200 });
 
   } catch (err: unknown) {
     const message = err instanceof Error ? err.message : "Erreur inconnue";

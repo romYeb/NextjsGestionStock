@@ -1,9 +1,12 @@
+'use client'
+
 import { Product } from '@/type'
 import { useUser } from '@clerk/nextjs'
 import React, { useEffect, useState, useCallback } from 'react'
 import { readProducts, replenishStockWithTransaction } from '../actions'
-import ProductComponent from './ProductComponent'
 import { toast } from 'react-toastify'
+import Image from 'next/image'
+import { getPublicImageUrl } from '@/lib/utils'
 
 const Stock = () => {
   const { user } = useUser()
@@ -90,7 +93,19 @@ const Stock = () => {
             </select>
 
             {selectedProduct && (
-              <ProductComponent product={selectedProduct} />
+              <div className="flex items-center space-x-4 my-4">
+                <Image
+                  src={getPublicImageUrl(selectedProduct.imageUrl)}
+                  alt={selectedProduct.name}
+                  width={80}
+                  height={80}
+                  className="rounded-lg object-cover"
+                />
+                <div>
+                  <div className="font-semibold">{selectedProduct.name}</div>
+                  <div className="text-sm text-gray-500">{selectedProduct.categoryName}</div>
+                </div>
+              </div>
             )}
 
             <label className='block'>Quantité à ajouter</label>

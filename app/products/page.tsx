@@ -1,4 +1,4 @@
-"use client";
+"use client"
 import React, { useEffect, useState, useCallback } from 'react'
 import Wrapper from '../components/Wrapper'
 import { useUser } from '@clerk/nextjs'
@@ -9,6 +9,7 @@ import ProductImage from '../components/ProductImage'
 import Link from 'next/link'
 import { Trash } from 'lucide-react'
 import { toast } from 'react-toastify'
+import { getPublicImageUrl } from '@/lib/utils'
 
 const Page = () => {
     const { user } = useUser()
@@ -30,11 +31,11 @@ const Page = () => {
 
     useEffect(() => {
         if (email) fetchProducts()
-    }, [fetchProducts, email]) // ✅ email ajouté ici
+    }, [fetchProducts, email])
 
     const handleDeleteProduct = async (product: Product) => {
-        const confirmDelete = confirm("Voulez-vous vraiment supprimer ce article ?")
-        if (!confirmDelete) return;
+        const confirmDelete = confirm("Voulez-vous vraiment supprimer cet article ?")
+        if (!confirmDelete) return
         try {
             if (product.imageUrl) {
                 const resDelete = await fetch("/api/upload", {
@@ -45,13 +46,13 @@ const Page = () => {
                 const dataDelete = await resDelete.json()
                 if (!dataDelete.success) {
                     throw new Error("Erreur lors de la suppression de l’image.")
-                } else {
-                    if (email) {
-                        await deleteProduct(product.id, email)
-                        await fetchProducts()
-                        toast.success("Article supprimé avec succès ")
-                    }
                 }
+            }
+
+            if (email) {
+                await deleteProduct(product.id, email)
+                await fetchProducts()
+                toast.success("Article supprimé avec succès")
             }
         } catch (error) {
             console.error(error)
@@ -75,7 +76,7 @@ const Page = () => {
                                 <th>Nom</th>
                                 <th>Description</th>
                                 <th>Prix</th>
-                                <th>Quantité</th>
+                                <th>Quantité-Taille</th>
                                 <th>Catégorie</th>
                                 <th>Actions</th>
                             </tr>
@@ -86,7 +87,7 @@ const Page = () => {
                                     <th>{index + 1}</th>
                                     <td>
                                         <ProductImage
-                                            src={product.imageUrl}
+                                            src={getPublicImageUrl(product.imageUrl)}
                                             alt={product.imageUrl}
                                             heightClass='h-12'
                                             widthClass='w-12'
@@ -94,8 +95,8 @@ const Page = () => {
                                     </td>
                                     <td>{product.name}</td>
                                     <td>{product.description}</td>
-                                    <td>{product.price} €</td>
-                                    <td className='capitalize'>{product.quantity} {product.unit}</td>
+                                    <td>{product.price} FCFA</td>
+                                    <td className='capitalize'>{product.quantity} - {product.unit}</td>
                                     <td>{product.categoryName}</td>
                                     <td className='flex gap-2 flex-col'>
                                         <Link className='btn btn-xs w-fit btn-primary' href={`/update-product/${product.id}`}>

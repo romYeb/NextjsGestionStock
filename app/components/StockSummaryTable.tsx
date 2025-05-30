@@ -3,6 +3,7 @@ import React, { useEffect, useState, useCallback } from 'react'
 import { getStockSummary } from '../actions'
 import ProductImage from './ProductImage'
 import EmptyState from './EmptyState'
+import { getPublicImageUrl } from '@/lib/utils'
 
 const StockSummaryTable = ({ email }: { email: string }) => {
     const [data, setData] = useState<StockSummary | null>(null)
@@ -24,11 +25,13 @@ const StockSummaryTable = ({ email }: { email: string }) => {
         fetchSummary()
     }, [fetchSummary])
 
-    if (!data) return (
-        <div className='flex justify-center items-center w-full'>
-            <span className="loading loading-spinner loading-xl"></span>
-        </div>
-    )
+    if (!data) {
+        return (
+            <div className='flex justify-center items-center w-full'>
+                <span className="loading loading-spinner loading-xl"></span>
+            </div>
+        )
+    }
 
     return (
         <div className='w-full'>
@@ -71,7 +74,7 @@ const StockSummaryTable = ({ email }: { email: string }) => {
                                     <th>{index + 1}</th>
                                     <td>
                                         <ProductImage
-                                            src={product.imageUrl}
+                                            src={getPublicImageUrl(product.imageUrl)}
                                             alt={product.imageUrl}
                                             heightClass='h-12'
                                             widthClass='w-12'

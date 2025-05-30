@@ -16,7 +16,7 @@ const Navbar = () => {
     { href: "/products", label: "Produits", icon: Store },
     { href: "/new-product", label: "Nouveau produit", icon: PackagePlus },
     { href: "/category", label: "Catégories", icon: ListTree },
-    { href: "/give", label: "Donner", icon: HandHeart },
+    { href: "/give", label: "Sortie de stock", icon: HandHeart },
     { href: "/transactions", label: "Transactions", icon: Receipt }
   ]
 

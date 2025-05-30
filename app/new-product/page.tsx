@@ -11,7 +11,6 @@ import { toast } from 'react-toastify'
 import { useRouter } from 'next/navigation'
 
 const Page = () => {
-
   const { user } = useUser()
   const email = user?.primaryEmailAddress?.emailAddress as string
   const router = useRouter()
@@ -26,8 +25,8 @@ const Page = () => {
     categoryId: "",
     unit: "",
     imageUrl: ""
-
   })
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target
     setFormData({ ...formData, [name]: value })
@@ -48,7 +47,6 @@ const Page = () => {
     fetchCategories()
   }, [email])
 
-
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = e.target.files?.[0] || null
     setFile(selectedFile)
@@ -56,55 +54,51 @@ const Page = () => {
       setPreviewUrl(URL.createObjectURL(selectedFile))
     }
   }
+
   const handleSubmit = async () => {
-    // Vérifie les champs du formulaire
     if (!formData.name || !formData.description || !formData.price || !formData.categoryId || !formData.unit) {
       toast.error("Veuillez remplir tous les champs du formulaire.")
       return
     }
-  
+
     if (!file) {
       toast.error("Veuillez sélectionner une image.")
       return
     }
-  
+
     try {
       const imageData = new FormData()
       imageData.append("file", file)
-  
+
       const res = await fetch("/api/upload", {
         method: "POST",
         body: imageData
       })
-  
+
       const data = await res.json()
-  
-      if (!data.success) {
+
+      if (!data.success || !data.path) {
         throw new Error("Erreur lors de l’upload de l’image.")
       }
-  
-      // Ajout de l'image dans le formData
-      formData.imageUrl = data.path
-  
-      // Création du produit
+
+      // ✅ On enregistre seulement le chemin relatif dans la base
+      formData.imageUrl = data.path.startsWith("/") ? data.path : `/${data.path}`
+
       await createProduct(formData, email)
-  
+
       toast.success("Article créé avec succès")
       router.push("/products")
-  
     } catch (error) {
       console.log(error)
       toast.error("Il y a une erreur")
     }
   }
-  
-
 
   return (
     <Wrapper>
       <div className='flex justify-cenetr items-center'>
         <div>
-          <h1 className='text-2xl font-bold  mb-4'>
+          <h1 className='text-2xl font-bold mb-4'>
             Créer Un article
           </h1>
 
@@ -124,10 +118,7 @@ const Page = () => {
                 className='textarea textarea-bordered w-full'
                 value={formData.description}
                 onChange={handleChange}
-              >
-              </textarea>
-
-
+              ></textarea>
               <input
                 type="number"
                 name="price"
@@ -136,7 +127,6 @@ const Page = () => {
                 value={formData.price}
                 onChange={handleChange}
               />
-
               <select
                 className='select select-bordered w-full'
                 value={formData.categoryId}
@@ -148,7 +138,6 @@ const Page = () => {
                   <option key={cat.id} value={cat.id}>{cat.name}</option>
                 ))}
               </select>
-
               <select
                 className='select select-bordered w-full'
                 value={formData.unit}
@@ -156,12 +145,12 @@ const Page = () => {
                 name='unit'
               >
                 <option value="">Sélectionner la taille </option>
-                <option value="">Taille vêtement</option>
+                <option value="">Vêtement</option>
                 <option value="s">S</option>
                 <option value="m">M</option>
                 <option value="l">L</option>
                 <option value="xl">XL</option>
-                <option value="">Taille de la chaussure</option>
+                <option value="">Chaussure</option>
                 <option value="39">39</option>
                 <option value="40">40</option>
                 <option value="41">41</option>
@@ -169,9 +158,10 @@ const Page = () => {
                 <option value="43">43</option>
                 <option value="44">44</option>
                 <option value="45">45</option>
+                <option value="46">46</option>
+                <option value="47">47</option>
+                <option value="48">48</option>
               </select>
-
-
               <input
                 type="file"
                 accept='image/*'
@@ -179,13 +169,10 @@ const Page = () => {
                 className='file-input file-input-bordered w-full'
                 onChange={handleFileChange}
               />
-
               <button onClick={handleSubmit} className='btn btn-primary'>
                 Créer le article
               </button>
-
             </div>
-
             <div className='md:ml-4 md:w-[300px] mt-4 md:mt-0 border-2 border-primary md:h-[300px] p-5 flex justify-center items-center rounded-3xl'>
               {previewUrl && previewUrl !== "" ? (
                 <div>
@@ -203,7 +190,6 @@ const Page = () => {
               )}
             </div>
           </section>
-
         </div>
       </div>
     </Wrapper>
