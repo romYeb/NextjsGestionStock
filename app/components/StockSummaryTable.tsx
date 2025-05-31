@@ -65,7 +65,7 @@ const StockSummaryTable = ({ email }: { email: string }) => {
                                 <th></th>
                                 <th>Image</th>
                                 <th>Nom</th>
-                                <th>Quantité</th>
+                                <th>Qté-Taille</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -82,7 +82,7 @@ const StockSummaryTable = ({ email }: { email: string }) => {
                                     </td>
                                     <td>{product.name}</td>
                                     <td className='capitalize'>
-                                        {product.quantity} {product.unit}
+                                        {product.quantity} - {product.unit}
                                     </td>
                                 </tr>
                             ))}
