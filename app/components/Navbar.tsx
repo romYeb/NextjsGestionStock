@@ -61,7 +61,7 @@ const Navbar = () => {
             <PackagePlus className='w-6 h-6 text-primary' />
           </div>
           <span className='font-bold text-xl'>
-            GesTok
+            GeStok
           </span>
         </div>
 
